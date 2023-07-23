@@ -103,9 +103,12 @@ void point(int x, int y) {
     }
 }
 
-bool getCellState(bool* grid, int x, int y, int gridWidth) {
+bool getCellState(bool* grid, int x, int y, int gridWidth, int gridHeight) {
+    x = (x + gridWidth) % gridWidth;
+    y = (y + gridHeight) % gridHeight;
     return grid[y * gridWidth + x];
 }
+
 
 void setCellState(bool* grid, int x, int y, int gridWidth, bool state) {
     grid[y * gridWidth + x] = state;
@@ -119,11 +122,11 @@ void updateGrid(bool* grid, int gridWidth, int gridHeight) {
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dx = -1; dx <= 1; dx++) {
                     if (dx == 0 && dy == 0) continue;
-                    if (getCellState(grid, x + dx, y + dy, gridWidth)) neighbors++;
+                    if (getCellState(grid, x + dx, y + dy, gridWidth, gridHeight)) neighbors++;
                 }
             }
 
-            bool currentState = getCellState(grid, x, y, gridWidth);
+            bool currentState = getCellState(grid, x, y, gridWidth, gridHeight);
             bool nextState = currentState ? (neighbors == 2 || neighbors == 3) : (neighbors == 3);
             setCellState(newGrid, x, y, gridWidth, nextState);
         }
@@ -136,7 +139,7 @@ void renderBuffer(SDL_Renderer* renderer, bool* grid, int gridWidth, int gridHei
     clear();
     for (int y = 0; y < gridHeight; y++) {
         for (int x = 0; x < gridWidth; x++) {
-            if (getCellState(grid, x, y, gridWidth)) point(x, y);
+            if (getCellState(grid, x, y, gridWidth, gridHeight)) point(x, y);
         }
     }
 
